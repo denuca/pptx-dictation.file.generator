@@ -3,26 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create PowerPoint</title>
+    <title>Dictation - Create PowerPoint</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f0f4f8; /* Light blue-grey background */
+        }
+        .form-container {
+            background-color: #ffffff; /* White form background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+        .header-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        h2 {
+            background-color: #dfe7f1; /* Light blue background */
+            color: #343a40; /* Dark text */
+            padding: 15px;
+            border-radius: 10px;
+        }
+        p.lead {
+            color: #6c757d; /* Light grey color for subheading */
+            margin-bottom: 20px;
+        }
+        .upload-link {
+            cursor: pointer;
+            color: #6c757d; /* Light grey color */
+            text-decoration: underline;
+        }
+        .upload-link.disabled {
+            color: grey;
+            pointer-events: none;
+            text-decoration: none;
+        }
+        #file_name {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #6c757d; /* Light grey color */
+        }
+    </style>
     <script>
         function toggleInputs() {
             const textInput = document.getElementById('text_input');
             const fileInput = document.getElementById('file_input');
+            const uploadLink = document.getElementById('upload_link');
+            const fileNameDisplay = document.getElementById('file_name');
 
-            // Disable file input if text input is filled
+            // Disable file input and upload link if text input is filled
             if (textInput.value.trim() !== '') {
                 fileInput.disabled = true;
+                uploadLink.classList.add('disabled');
+                fileNameDisplay.textContent = ''; // Clear filename display if text is typed
             } else {
                 fileInput.disabled = false;
+                uploadLink.classList.remove('disabled');
             }
 
-            // Disable text input if file input is provided
+            // Disable text input if a file is uploaded
             if (fileInput.files.length > 0) {
                 textInput.disabled = true;
+                fileNameDisplay.textContent = `Selected file: ${fileInput.files[0].name}`; // Display the uploaded file name
             } else {
                 textInput.disabled = false;
+                fileNameDisplay.textContent = ''; // Clear filename display if no file is selected
             }
+        }
+
+        function triggerFileUpload() {
+            const fileInput = document.getElementById('file_input');
+            fileInput.click();
         }
 
         function closeAlert() {
@@ -31,40 +85,63 @@
                 alert.style.display = 'none';
             }
         }
+
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const fileInput = document.getElementById('file_input');
+            if (fileInput.files.length > 0) {
+                console.log("File uploaded:", fileInput.files[0].name);
+            } else {
+                console.log("Text submitted:", document.getElementById('text_input').value);
+            }
+        });
     </script>
 </head>
 <body>
     <div class="container mt-5">
-        <h2>Create PowerPoint from Text</h2>
+        <div class="form-container mx-auto" style="max-width: 600px;">
+            <div class="header-container">
+                <h2>Dictation</h2>
+                <p class="lead">Enter your dictation text or upload a file to generate a PowerPoint presentation.</p>
+            </div>
 
-        {% if message %}
-        <div id="messageAlert" class="alert alert-{{ 'success' if result == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            {% if download_url %}
-                <a href="{{ url_for('index.download_file') }}" class="btn btn-success">Download your PowerPoint</a>
+            {% if message %}
+            <div id="messageAlert" class="alert alert-{{ 'success' if result == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                {% if download_url %}
+                    <a href="{{ url_for('index.download_file') }}" class="btn btn-success">Download your PowerPoint</a>
+                {% endif %}
+                <button type="button" class="btn-close" aria-label="Close" onclick="closeAlert()"></button>
+            </div>
             {% endif %}
-            <button type="button" class="btn-close" aria-label="Close" onclick="closeAlert()"></button>
-        </div>
-        {% endif %}
+            <form method="POST" enctype="multipart/form-data">
+                <div class="form-group mb-3">
+                    <label for="text_input">Enter the text</label>
+                    <textarea class="form-control" id="text_input" name="text_input" rows="10"
+                     placeholder="The title
+The dictation content here.
+And here also." oninput="toggleInputs()"></textarea>
+                    <small id="text_input_help_block" class="form-text text-muted">
+                        The first line will be used as the title in the PowerPoint, and the following lines will be used for the dictation content.
+                    </small>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label>Or <span id="upload_link" class="upload-link" onclick="triggerFileUpload()">upload a text file</span></label>
+                    <input type="file" class="d-none" id="file_input" name="file_input" accept=".txt" onchange="toggleInputs()">
+                    <div id="file_name"></div> <!-- Display for selected file name -->
+                </div>
 
-        <form method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="text_input">Enter text (first line for title, second line for content):</label>
-                <textarea class="form-control" id="text_input" name="text_input" rows="5" placeholder="Enter multi-line text here" oninput="toggleInputs()"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="file_input">Or Upload a Text File (Optional)</label>
-                <input type="file" class="form-control-file" id="file_input" name="file_input" accept=".txt" onchange="toggleInputs()">
-            </div>
-            <div class="form-group mt-3">
-                <label for="email_input">Send to email (optional):</label>
-                <input type="email" class="form-control" id="email_input" name="email_input" placeholder="Enter email">
-            </div>
-            <div class="form-group">
-                <button type="reset" class="btn btn-secondary mt-3">Reset</button>
-                <button type="submit" class="btn btn-primary mt-3">Generate PowerPoint</button>
-            </div>
-        </form>
+                <div class="form-group d-none">
+                    <label for="email_input">Send to email (optional):</label>
+                    <input type="email" class="form-control" id="email_input" name="email_input" placeholder="Enter email">
+                </div>
+
+                <div class="form-group d-flex justify-content-between">
+                    <button type="reset" class="btn btn-secondary mt-3" onclick="toggleInputs()">Reset</button>
+                    <button type="submit" class="btn btn-primary mt-3">Generate PowerPoint</button>
+                </div>
+            </form>
+        </div>
     </div>
 </body>
 </html>
