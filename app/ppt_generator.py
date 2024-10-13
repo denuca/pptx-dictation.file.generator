@@ -30,61 +30,58 @@ def create_ppt_from_text(title, content):
 
 def create_ppt_dictation_from_text(title, content):
     print(f"called create ppt dictation from text")
-
     try:
-        #is_valid, error_message = validate_input(title, content)
-        #if not is_valid:
-        #    raise ValueError(error_message)
-        print(f"inside create ppt dictation from text")
         ppt = create_ppt()
         slide = add_content_slide(ppt, title, content)
         print(f"slide: {slide.slide_layout.name}")
-        words = re.findall(r'\w+|[^\w\s]', content, re.UNICODE)
-        #print(f"words: {words}")
 
-        # Find the max height for the text in content
+        # Split the content into lines based on carriage returns
+        lines = content.split('\n')
+        
         max_height = 0
-        #for line in content:
-        words = re.findall(r'\w+|[^\w\s]', content, re.UNICODE)
-        for word in words:
-            content_type = 'word' if re.match(r'\w+', word) else 'punctuation'
-            _, text_height = calculate_text_size(word, styles[content_type]['font_path'], styles[content_type]['font_size'])
-            max_height = max(max_height, Inches(text_height / 72))
+        for line in lines:
+            words = re.findall(r'\w+|[^\w\s]', line, re.UNICODE)
+            for word in words:
+                content_type = 'word' if re.match(r'\w+', word) else 'punctuation'
+                _, text_height = calculate_text_size(word, styles[content_type]['font_path'], styles[content_type]['font_size'])
+                max_height = max(max_height, Inches(text_height / 72))
 
-        # Process remaining lines of text (content)
-        # and put them in boxes
-        # Initialize placeholder, slide number and word ID
+        # Initialize placeholder, slide number, and word ID
         content_placeholder = slide.placeholders[1]
         slide_number = 1
         word_id = 1
-        #for line in content:
-        words = re.findall(r'\w+|[^\w\s]', content, re.UNICODE)
         left = content_placeholder.left
         top = content_placeholder.top
-        for word in words:
-            content_type = 'word' if re.match(r'\w+', word) else 'punctuation'
-            add_text_box(slide, word, left, top + Inches(0.3), max_height, word_id, content_type)
-            text_width, _ = calculate_text_size(word, styles[content_type]['font_path'], styles[content_type]['font_size'])
-            left += Inches(text_width / 72) + Inches(0.2)  # Adjust spacing between text boxes
-            if styles[content_type]['count_id']:
-                word_id += 1
+        
+        for line in lines:
+            words = re.findall(r'\w+|[^\w\s]', line, re.UNICODE)
+            for word in words:
+                content_type = 'word' if re.match(r'\w+', word) else 'punctuation'
+                add_text_box(slide, word, left, top + Inches(0.3), max_height, word_id, content_type)
+                text_width, _ = calculate_text_size(word, styles[content_type]['font_path'], styles[content_type]['font_size'])
+                left += Inches(text_width / 72) + Inches(0.2)  # Adjust spacing between text boxes
+                if styles[content_type]['count_id']:
+                    word_id += 1
 
-            # Check if the next text box will fit in the current line
-            if left + Inches(1.5) > content_placeholder.left + content_placeholder.width:
-                left = content_placeholder.left
-                top += max_height + Inches(0.6)  # Move to the next line
-                
-                # Check if the next text box will fit in the current slide
-                if top + max_height + Inches(0.6) > content_placeholder.top + content_placeholder.height:
-                    slide_number += 1
-                    #print(f"adding slide...")
-                    slide = ppt.slides.add_slide(ppt.slide_layouts[1])
-                    #print(f"slide added...")
-                    title_shape = slide.shapes.title
-                    title_shape.text = title
-                    content_placeholder = slide.placeholders[1]
-                    top = content_placeholder.top
-        # Delete the content placeholders from all slides as they were used for dimensions only.
+                # Check if the next text box will fit in the current line
+                if left + Inches(1.5) > content_placeholder.left + content_placeholder.width:
+                    left = content_placeholder.left
+                    top += max_height + Inches(0.6)  # Move to the next line
+                    
+                    # Check if the next text box will fit in the current slide
+                    if top + max_height + Inches(0.6) > content_placeholder.top + content_placeholder.height:
+                        slide_number += 1
+                        slide = ppt.slides.add_slide(ppt.slide_layouts[1])
+                        title_shape = slide.shapes.title
+                        title_shape.text = title
+                        content_placeholder = slide.placeholders[1]
+                        top = content_placeholder.top
+
+            # Move to the next line after processing all words in the current line
+            left = content_placeholder.left
+            top += max_height + Inches(0.6)
+
+        # Clean up the content placeholders and add headers/footers as needed (same as before)
         for slide in ppt.slides:
             for shape in slide.shapes:
                 if shape.is_placeholder and shape.placeholder_format.idx == 1:
@@ -93,14 +90,12 @@ def create_ppt_dictation_from_text(title, content):
 
         # Add headers and footers
         for i, slide in enumerate(ppt.slides):
-            # Add header
             header = slide.shapes.add_textbox(Cm(1), Cm(0.5), ppt.slide_width - Cm(2), Cm(1))
             header_frame = header.text_frame
             header_frame.text = styles['header']['text']
             header_frame.paragraphs[0].font.size = Pt(styles['header']['font_size'])
             header_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
 
-            # Add footer with page number
             footer = slide.shapes.add_textbox(Cm(1), ppt.slide_height - Cm(1.5), ppt.slide_width - Cm(2), Cm(1))
             footer_frame = footer.text_frame
             footer_frame.text = f"Page {i + 1} of {len(ppt.slides)}"
