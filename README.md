@@ -1,0 +1,3 @@
+# Dictation File Generator
+
+A Flask-based web application that allows users to create PowerPoint presentations from text input. Users can enter text directly or upload a file, and the application generates a PPTX file using a modular core library for enhanced functionality. The project emphasizes code separation, modularity, and robust error handling, making it suitable for educational and professional use. It also includes features for emailing generated presentations and validating user input.

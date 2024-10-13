@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create PowerPoint</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script>
+        function toggleInputs() {
+            const textInput = document.getElementById('text_input');
+            const fileInput = document.getElementById('file_input');
+
+            // Disable file input if text input is filled
+            if (textInput.value.trim() !== '') {
+                fileInput.disabled = true;
+            } else {
+                fileInput.disabled = false;
+            }
+
+            // Disable text input if file input is provided
+            if (fileInput.files.length > 0) {
+                textInput.disabled = true;
+            } else {
+                textInput.disabled = false;
+            }
+        }
+
+        function closeAlert() {
+            const alert = document.getElementById('messageAlert');
+            if (alert) {
+                alert.style.display = 'none';
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Create PowerPoint from Text</h2>
+
+        {% if message %}
+        <div id="messageAlert" class="alert alert-{{ 'success' if result == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            {% if download_url %}
+                <a href="{{ url_for('index.download_file') }}" class="btn btn-success">Download your PowerPoint</a>
+            {% endif %}
+            <button type="button" class="btn-close" aria-label="Close" onclick="closeAlert()"></button>
+        </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="text_input">Enter text (first line for title, second line for content):</label>
+                <textarea class="form-control" id="text_input" name="text_input" rows="5" placeholder="Enter multi-line text here" oninput="toggleInputs()"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="file_input">Or Upload a Text File (Optional)</label>
+                <input type="file" class="form-control-file" id="file_input" name="file_input" accept=".txt" onchange="toggleInputs()">
+            </div>
+            <div class="form-group mt-3">
+                <label for="email_input">Send to email (optional):</label>
+                <input type="email" class="form-control" id="email_input" name="email_input" placeholder="Enter email">
+            </div>
+            <div class="form-group">
+                <button type="reset" class="btn btn-secondary mt-3">Reset</button>
+                <button type="submit" class="btn btn-primary mt-3">Generate PowerPoint</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
