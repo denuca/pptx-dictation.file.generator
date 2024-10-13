@@ -56,7 +56,7 @@ def test_download_file(client):
 
     # Check that the response is a valid file download
     assert response.status_code == 200
-    assert response.headers['Content-Disposition'] == 'attachment; filename=output.pptx'
+    assert response.headers['Content-Disposition'] == 'attachment; filename=dictation-output.pptx'
     assert response.content_type == 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
 
 def generate_mock_pptx():
