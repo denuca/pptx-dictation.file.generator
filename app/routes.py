@@ -118,4 +118,4 @@ def download_file():
     ppt.save(ppt_io)
     ppt_io.seek(0)
 
-    return send_file(ppt_io, download_name="output.pptx", as_attachment=True)
+    return send_file(ppt_io, download_name="dictation-output.pptx", as_attachment=True)
