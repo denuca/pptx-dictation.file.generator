@@ -17,7 +17,7 @@
         "font_path": "fonts/comic.ttf",
         "font_name": "Comic Sans MS",
         "font_size": 20,
-        "font_color": [255, 255, 255],
+        "font_color": [0, 0, 0],
         "border_color": [0, 0, 250],
         "border_width": 1,
         "margin_left": 5,
@@ -32,7 +32,7 @@
         "font_color": [255, 0, 0]
     },
     "header": {
-        "text": "Header Text",
+        "text": "Dictation",
         "font_size": 10
     },
     "footer": {
