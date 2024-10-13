@@ -141,7 +141,43 @@ And here also." oninput="toggleInputs()"></textarea>
                     <button type="submit" class="btn btn-primary mt-3">Generate PowerPoint</button>
                 </div>
             </form>
+
+            <!-- Expandable panel for how-to-use text -->
+            <div class="accordion mt-4" id="howToUseAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <span class="icon" aria-hidden="true">🛠️</span> How to Use the generated PowerPoint
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#howToUseAccordion">
+                        <div class="accordion-body">
+                            <p>Welcome! This guide will help you understand how to effectively use the PowerPoint presentation generated from your uploaded content or provided text. The slides are designed to enhance your teaching experience and engage your students effectively.</p>
+                            <h5>1. Overview of the PowerPoint Slides</h5>
+                            <p><strong>Content Presentation:</strong> Each slide contains the text from your uploaded file or the text entered in the multi-line textbox.</p>
+                            <p><strong>Text Formatting:</strong> The words in the text are displayed in white on a white background, making them appear invisible until animated. Each word is enclosed in its own textbox with a black border.</p>
+                            <p><strong>Punctuation Marks:</strong> Punctuation marks are clearly visible, ensuring that students can recognize them while reading.</p>
+                            <h5>2. Preparing for Presentation</h5>
+                            <p><strong>Printing:</strong> The slides can be printed as handouts. Since the text is in white on a white background, you will need to adjust your printer settings to ensure the text is printed on the paper. For the best results, consider printing on colored paper or adjusting the slide background color in PowerPoint.</p>
+                            <h5>3. Presenting to Students</h5>
+                            <p><strong>Animating Text:</strong> To engage students, you can manually animate the text. Here’s how:</p>
+                            <ol>
+                                <li>Open the PowerPoint presentation.</li>
+                                <li>Click on the “Animations” tab in the toolbar.</li>
+                                <li>Select the text boxes containing the words.</li>
+                                <li>Choose an animation effect (like “Appear” or “Fade”).</li>
+                                <li>Set the animation to trigger on click. This way, you can reveal each word one at a time as you discuss it with your students.</li>
+                            </ol>
+                            <h5>4. Classroom Interaction</h5>
+                            <p><strong>Discussing Each Word:</strong> As you click to reveal each word, encourage students to read aloud or discuss the meaning. This method can help improve their reading skills and comprehension.</p>
+                            <p><strong>Punctuation Awareness:</strong> Highlight the punctuation marks on the slides to ensure students understand their significance in reading and writing.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
