@@ -2,7 +2,7 @@
 import os
 import io
 from flask import Blueprint, request, session, send_file, render_template, redirect, url_for, session
-from app.ppt_generator import create_ppt_from_text  # Adjust import if necessary
+from app.ppt_generator import create_ppt_from_text, create_ppt_dictation_from_text  # Adjust import if necessary
 from app.email_service import send_email  # Optional
 from io import BytesIO
 
@@ -66,7 +66,10 @@ def index_route():
         session['content'] = content
 
         # Generate PowerPoint
-        ppt = create_ppt_from_text(title, content)
+        #ppt = create_ppt_from_text(title, content)
+        print(f"create_ppt_dictation_from_text start")
+        ppt = create_ppt_dictation_from_text(title, content)
+        print(f"create_ppt_dictation_from_text end")
         ppt_io = io.BytesIO()
         ppt.save(ppt_io)
         ppt_io.seek(0)
@@ -109,7 +112,8 @@ def download_file():
         return "The generated PowerPoint is too large to download directly. Please reduce the content size or check back later for a link.", 200
 
     # Generate PowerPoint from session data
-    ppt = create_ppt_from_text(title, content)
+    #ppt = create_ppt_from_text(title, content)
+    ppt = create_ppt_dictation_from_text(title, content)
     ppt_io = io.BytesIO()
     ppt.save(ppt_io)
     ppt_io.seek(0)

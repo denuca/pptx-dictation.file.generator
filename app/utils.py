@@ -22,3 +22,8 @@ def validate_input(text_input, file_input):
             return False, f"Error reading uploaded file: {e}"
 
     return True, text_input
+
+def load_text_file(file_path):
+    """Reads the text file and returns a list of lines."""
+    with open(file_path, 'r') as file:
+        return file.readlines()
