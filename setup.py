@@ -6,6 +6,11 @@ setup(
     packages=find_packages(),
     install_requires=[
         'Flask',  # Your Flask app's dependencies
-        'core.file.generator @ git+https://github.com/denuca/core.file.generator.git@main#egg=core.file.generator',
+        'Flask-Mail',
+        'python-dotenv',
+        'pytest',
+    ],
+    dependency_links=[
+        'git+https://github.com/denuca/core.file.generator.git#egg=core.file.generator',
     ],
 )
