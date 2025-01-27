@@ -44,7 +44,7 @@ def create_ppt_dictation_from_text(title, content):
         
         max_height = 0
         for line in lines:
-            words = re.findall(r'\w+|[^\w\s]', line, re.UNICODE)
+            words = re.findall(r'\w+[''-\w]*|[^\w\s]', line, re.UNICODE)
             for word in words:
                 content_type = 'word' if re.match(r'\w+', word) else 'punctuation'
                 _, text_height = calculate_text_size(word, styles[content_type]['font_path'], styles[content_type]['font_size'])
